@@ -52,8 +52,8 @@ RUN go_version="1.21.5" && \
     rm go.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-# Set up workspace
 WORKDIR /workspace
 
-# Note: We don't clone repositories in Docker build anymore
-# This will be done at runtime to allow for updates and avoid stale sources
+# Direct entrypoint logic without separate file
+ENTRYPOINT ["/bin/bash", "-c", "case \"$1\" in setup) exec /scripts/init-workspace.sh ;; build) exec /scripts/build-all.sh ;; *) exec \"$@\" ;; esac", "--"]
+CMD ["bash"]

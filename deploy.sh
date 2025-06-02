@@ -51,7 +51,7 @@ case "$ACTION" in
         echo "Usage: $0 [start|setup|build|clean]"
         echo "  start  - Enter development container"
         echo "  setup  - Download kernel sources"
-        echo "  build  - Build kernel and rootfs"
+        echo "  build  - Build kernel and rootfs (includes configuration)"
         echo "  clean  - Clean everything"
         ;;
 esac
@@ -65,7 +65,7 @@ echo ""
 echo "🎯 Quick start:"
 echo "  ./run.sh setup    # Download sources"
 echo "  ./run.sh start    # Enter dev environment"
-echo "  ./run.sh build    # Build everything"
+echo "  ./run.sh build    # Build everything (auto-configures kernel)"
 echo ""
 echo "🐛 Inside container:"
 echo "  ./scripts/run-qemu.sh         # Test kernel"
