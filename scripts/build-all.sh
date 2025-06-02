@@ -16,66 +16,73 @@ echo "🔧 Configuring kernel for development and debugging..."
 cd linux
 make defconfig
 
-# Complete kernel configuration for development
-echo "📝 Enabling debugging features..."
-scripts/config --enable CONFIG_DEBUG_KERNEL \
-                --enable CONFIG_DEBUG_INFO \
-                --enable CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT \
-                --enable CONFIG_GDB_SCRIPTS \
-                --enable CONFIG_FRAME_POINTER \
-                --enable CONFIG_KASAN \
-                --enable CONFIG_KASAN_INLINE \
-                --enable CONFIG_UBSAN \
-                --enable CONFIG_KCOV \
-                --enable CONFIG_DEBUG_FS \
-                --enable CONFIG_CONFIGFS_FS \
-                --enable CONFIG_SECURITYFS
+# Apply all kernel configuration changes in grouped batches
+echo "📝 Applying kernel configuration for development..."
 
-echo "📝 Enabling kernel hacking features..."
-scripts/config --enable CONFIG_MAGIC_SYSRQ \
-                --enable CONFIG_KALLSYMS \
-                --enable CONFIG_KALLSYMS_ALL \
-                --enable CONFIG_DEBUG_BUGVERBOSE
+# Debugging and development features
+scripts/config \
+    --enable CONFIG_DEBUG_KERNEL \
+    --enable CONFIG_DEBUG_INFO \
+    --enable CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT \
+    --enable CONFIG_GDB_SCRIPTS \
+    --enable CONFIG_FRAME_POINTER \
+    --enable CONFIG_KASAN \
+    --enable CONFIG_KASAN_INLINE \
+    --enable CONFIG_UBSAN \
+    --enable CONFIG_KCOV \
+    --enable CONFIG_DEBUG_FS \
+    --enable CONFIG_CONFIGFS_FS \
+    --enable CONFIG_SECURITYFS \
+    --enable CONFIG_MAGIC_SYSRQ \
+    --enable CONFIG_KALLSYMS \
+    --enable CONFIG_KALLSYMS_ALL \
+    --enable CONFIG_DEBUG_BUGVERBOSE
 
-echo "📝 Enabling Rust support..."
-scripts/config --enable CONFIG_RUST \
-                --enable CONFIG_RUST_IS_AVAILABLE \
-                --enable CONFIG_SAMPLES \
-                --enable CONFIG_SAMPLES_RUST
+# Rust support
+scripts/config \
+    --enable CONFIG_RUST \
+    --enable CONFIG_RUST_IS_AVAILABLE \
+    --enable CONFIG_SAMPLES \
+    --enable CONFIG_SAMPLES_RUST
 
-echo "📝 Enabling networking..."
-scripts/config --enable CONFIG_NET \
-                --enable CONFIG_INET \
-                --enable CONFIG_NETDEVICES \
-                --enable CONFIG_NET_CORE \
-                --enable CONFIG_VIRTIO_NET
+# Networking support
+scripts/config \
+    --enable CONFIG_NET \
+    --enable CONFIG_INET \
+    --enable CONFIG_NETDEVICES \
+    --enable CONFIG_NET_CORE \
+    --enable CONFIG_VIRTIO_NET
 
-echo "📝 Enabling filesystems..."
-scripts/config --enable CONFIG_EXT4_FS \
-                --enable CONFIG_TMPFS \
-                --enable CONFIG_PROC_FS \
-                --enable CONFIG_SYSFS
+# Filesystem support
+scripts/config \
+    --enable CONFIG_EXT4_FS \
+    --enable CONFIG_TMPFS \
+    --enable CONFIG_PROC_FS \
+    --enable CONFIG_SYSFS
 
-echo "📝 Enabling virtualization support..."
-scripts/config --enable CONFIG_VIRTIO \
-                --enable CONFIG_VIRTIO_PCI \
-                --enable CONFIG_VIRTIO_BALLOON \
-                --enable CONFIG_VIRTIO_BLK \
-                --enable CONFIG_VIRTIO_CONSOLE
+# Virtualization support
+scripts/config \
+    --enable CONFIG_VIRTIO \
+    --enable CONFIG_VIRTIO_PCI \
+    --enable CONFIG_VIRTIO_BALLOON \
+    --enable CONFIG_VIRTIO_BLK \
+    --enable CONFIG_VIRTIO_CONSOLE
 
-echo "📝 Enabling performance and tracing..."
-scripts/config --enable CONFIG_PERF_EVENTS \
-                --enable CONFIG_FTRACE \
-                --enable CONFIG_FUNCTION_TRACER \
-                --enable CONFIG_DYNAMIC_FTRACE \
-                --enable CONFIG_BPF \
-                --enable CONFIG_BPF_SYSCALL \
-                --enable CONFIG_BPF_JIT \
-                --enable CONFIG_HAVE_EBPF_JIT
+# Performance and tracing
+scripts/config \
+    --enable CONFIG_PERF_EVENTS \
+    --enable CONFIG_FTRACE \
+    --enable CONFIG_FUNCTION_TRACER \
+    --enable CONFIG_DYNAMIC_FTRACE \
+    --enable CONFIG_BPF \
+    --enable CONFIG_BPF_SYSCALL \
+    --enable CONFIG_BPF_JIT \
+    --enable CONFIG_HAVE_EBPF_JIT
 
-echo "📝 Disabling security features that interfere with debugging..."
-scripts/config --disable CONFIG_RANDOMIZE_BASE \
-                --disable CONFIG_RETPOLINE
+# Disable features that interfere with debugging
+scripts/config \
+    --disable CONFIG_RANDOMIZE_BASE \
+    --disable CONFIG_RETPOLINE
 
 echo "✅ Kernel configured for development and debugging"
 
