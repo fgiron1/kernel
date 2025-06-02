@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     # Debugging and analysis
     gdb addr2line crash \
     # Performance tools
-    linux-tools-generic perf-tools-unstable \
+    linux-tools-generic \
     # Python for various tools
     python3 python3-pip python3-dev \
     # Rust dependencies
@@ -23,6 +23,10 @@ RUN apt-get update && apt-get install -y \
     sparse cppcheck \
     # Documentation tools
     graphviz \
+    # QEMU for testing kernels
+    qemu-system-x86 \
+    # Additional tools for rootfs creation
+    cpio gzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Rust toolchain
@@ -50,15 +54,6 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 
 # Set up workspace
 WORKDIR /workspace
-RUN mkdir -p /workspace/{linux,buildroot,syzkaller,scripts}
 
-# Clone essential repositories
-RUN git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git /workspace/linux && \
-    git clone --depth=1 https://github.com/google/syzkaller.git /workspace/syzkaller && \
-    git clone --depth=1 https://github.com/buildroot/buildroot.git /workspace/buildroot
-
-# Build syzkaller
-WORKDIR /workspace/syzkaller
-RUN make
-
-WORKDIR /workspace
+# Note: We don't clone repositories in Docker build anymore
+# This will be done at runtime to allow for updates and avoid stale sources
