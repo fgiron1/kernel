@@ -1,58 +1,23 @@
 #!/bin/bash
 
-KERNEL="/workspace/linux/arch/x86/boot/bzImage"
-ROOTFS="/workspace/rootfs.img"
-APPEND="root=/dev/ram rdinit=/init console=ttyS0 nokaslr earlyprintk=serial,ttyS0,115200"
+K="/workspace/linux/arch/x86/boot/bzImage"
+R="/workspace/rootfs.img"
 
-# Check if kernel exists
-if [ ! -f "$KERNEL" ]; then
-    echo "❌ Kernel not found at $KERNEL"
-    echo "Build the kernel first with: /scripts/build-kernel.sh"
-    exit 1
-fi
+[ -f "$K" ] || { echo "❌ Build kernel first: ./run.sh build"; exit 1; }
+[ -f "$R" ] || { echo "❌ Build rootfs first: ./run.sh build"; exit 1; }
 
-# Check if rootfs exists
-if [ ! -f "$ROOTFS" ]; then
-    echo "❌ Root filesystem not found at $ROOTFS"
-    echo "Build the rootfs first with: /scripts/build-rootfs.sh"
-    exit 1
-fi
-
-# QEMU arguments for kernel development
-QEMU_ARGS=(
-    -kernel "$KERNEL"
-    -initrd "$ROOTFS"
-    -append "$APPEND"
-    -m 2G
-    -smp 2
-    -nographic
-    -netdev user,id=net0,hostfwd=tcp::2222-:22
-    -device virtio-net-pci,netdev=net0
-)
+# QEMU args
+ARGS=(-kernel "$K" -initrd "$R" -m 1G -smp 2 -nographic 
+      -append "root=/dev/ram rdinit=/init console=ttyS0 nokaslr")
 
 # Add KVM if available
-if [ -e /dev/kvm ]; then
-    QEMU_ARGS+=(-enable-kvm -cpu host)
-    echo "✅ Using KVM acceleration"
-else
-    echo "⚠️ KVM not available, using slower emulation"
-fi
+[ -e /dev/kvm ] && ARGS+=(-enable-kvm -cpu host) || echo "⚠️ No KVM"
 
-# Add debugging support if requested
+# Debug mode
 if [ "$1" = "debug" ]; then
-    QEMU_ARGS+=(-s -S)
-    echo "🐛 QEMU started in debug mode"
-    echo ""
-    echo "📝 To attach GDB:"
-    echo "   1. Open another terminal"
-    echo "   2. Run: ./scripts/debug-kernel.sh"
-    echo "   3. In GDB: (gdb) continue"
-    echo ""
+    ARGS+=(-s -S)
+    echo "🐛 Debug mode - attach GDB with: ./scripts/debug-kernel.sh"
 fi
 
-echo "🚀 Starting QEMU with kernel: $KERNEL"
-echo "💾 Using rootfs: $ROOTFS"
-echo "💡 To exit QEMU: Ctrl+A then X"
-echo ""
-
-exec qemu-system-x86_64 "${QEMU_ARGS[@]}"
+echo "🚀 Starting QEMU (Ctrl+A X to exit)"
+exec qemu-system-x86_64 "${ARGS[@]}"
